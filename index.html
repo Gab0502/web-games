@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+    <center><canvas id="screen" width="800" height="800" style="border: 1px solid black;"></canvas></center>
+
+    <script>
+        var canvas = document.getElementById('screen');
+        var ctx = canvas.getContext('2d');
+        // window.onmousedown = press
+
+         var x = 0
+         var y = 150
+         requestAnimationFrame(gameloop);
+         function gameloop(){
+             if(x<=700) desenharQuadrado(x,y);
+             else clearTimeout()
+             x = x + 10;
+             requestAnimationFrame(gameloop);
+         }
+         function desenharQuadrado(pX,pY) {
+             ctx.clearRect(0,0,800,400);
+             ctx.fillStyle = '#ffdead';
+             ctx.fillRect(pX, pY, 100, 100)
+         }
+
+        // function press(clique){
+        //     alert('botao pressionado em x' + clique.screenX + ' e y=' + clique.screenY);
+        // }
+
+    </script>
+
+</body>
+</html>
