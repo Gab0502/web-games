@@ -7,32 +7,69 @@
 </head>
 <body>
     
-    <center><canvas id="screen" width="800" height="800" style="border: 1px solid black;"></canvas></center>
+    <center><canvas id="screen" width="800" height="600" style="border: 1px solid black;"></canvas></center>
 
     <script>
         var canvas = document.getElementById('screen');
         var ctx = canvas.getContext('2d');
         // window.onmousedown = press
+        
+        var x_dead = 0;
+        var y_dead = 200;
+        var largura_dead = 50;
+        var altura_dead = 50;
 
-         var x = 0
-         var y = 150
-         requestAnimationFrame(gameloop);
-         function gameloop(){
-             if(x<=700) desenharQuadrado(x,y);
-             else clearTimeout()
-             x = x + 10;
-             requestAnimationFrame(gameloop);
-         }
-         function desenharQuadrado(pX,pY) {
-             ctx.clearRect(0,0,800,400);
-             ctx.fillStyle = '#ffdead';
-             ctx.fillRect(pX, pY, 100, 100)
-         }
+        var x_azul = 700;
+        var y_azul = 200;
+        var largura_azul= 50;
+        var altura_azul= 50;
 
-        // function press(clique){
-        //     alert('botao pressionado em x' + clique.screenX + ' e y=' + clique.screenY);
-        // }
 
+
+        requestAnimationFrame(gameloop);
+
+        function colisao(){
+
+            if(((x_dead + largura_dead) > x_azul && x_dead < (x_azul + largura_azul)) && ((y_dead + altura_dead) > y_azul && y_dead < (y_azul + altura_azul))){
+                clearTimeout();
+            }else{
+                requestAnimationFrame(gameloop);
+            }
+        }
+
+
+        window.onkeydown = pressionaTecla;
+
+        function pressionaTecla(tecla){
+		    if(tecla.keyCode == 38  ) {
+			y_dead = y_dead - 5;
+			}
+			if(tecla.keyCode == 40  ) {
+            y_dead = y_dead + 5;
+			}
+			if(tecla.keyCode == 39  ) {
+            x_dead = x_dead + 5; 
+			}
+			if(tecla.keyCode == 37  ) {
+            x_dead = x_dead - 5; 
+			}	
+        }
+
+
+
+
+		function gameloop() {
+			desenharQuadrado(x_dead,y_dead);
+            desenharQuadrado(x_azul,y_azul)
+			colisao();
+		}
+		function desenharQuadrado(pX,pY) {
+			ctx.clearRect(0, 0, 800, 600); 
+			ctx.fillStyle = '#ffdead';
+			ctx.fillRect(x_dead, y_dead, largura_dead, altura_dead);
+            ctx.fillStyle = '#0000ff';
+            ctx.fillRect(x_azul,y_azul,largura_azul,altura_azul);
+		}
     </script>
 
 </body>
