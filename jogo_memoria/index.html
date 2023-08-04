@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    *{
+        overflow: hidden;
+        margin: 0;
+        padding: 0;
+        font-size: 1em;
+    }
+    .botao{
+        position: absolute;
+        bottom: 20px;
+        left: 45%;
+        width: 200px;
+        height: 50px;
+    }
+
+</style>
+<body>
+   
+    <canvas id="screen" width="800" height="400" style="background: #cecece;"></canvas>
+    <button name="botao" class="botao" onClick="location.reload();">Jogar novamente?</button>
+
+
+
+    <script>
+
+    document.addEventListener('DOMContentLoaded', function() {
+    iniciar();
+    });
+
+        var larguracanvas = window.innerWidth;
+        var alturacanvas = window.innerHeight;
+        var ctx;
+        var primeiroclique=true;
+        var primeiracarta=-1;
+        var segundacarta;
+        var backcolor="#AEA";
+        var tablecolor="#FFF";
+        var deck=[];
+        var primeirasx=0.1*larguracanvas;
+        var primeirasy=0.1*alturacanvas;
+        var margin=0.01*larguracanvas;
+
+
+        if(larguracanvas > alturacanvas){
+            var larguracarta=0.15*larguracanvas
+            var alturacarta=0.3*alturacanvas
+        }else{
+            var larguracarta=0.15*larguracanvas
+            var alturacanvas=0.10*alturacanvas
+        }
+        var tid;
+        var matched;
+        var starttime;
+        var contagem = 0;
+        var pares = [
+            ["death.png","death.png"],
+            ["justice.png", "justice.png"],
+            ["fool.png", "fool.png"],
+            ["star.png", "star.png"],
+            ["world.png", "world.png"]
+        ];
+
+        function iniciar(){
+            canvas = document.getElementById('screen');
+            ctx = canvas.getContext('2d');
+            canvas.addEventListener('click', escolher, false);
+            redimensionarcanvas();
+            sortearcartas();
+            embaralharcartas();
+            inicio= new Date();
+            inicio= Number(inicio.getTime());
+        }
+
+        function redimensionarcanvas(){
+            canvas.width= window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        function sortearcartas(){
+            var i;
+            var wins = 0;
+            var carta1;
+            var carta2;
+            var imgcarta1;
+            var imgcarta2;
+            var cx = primeirasx;
+            var cy = primeirasy;
+
+            for(i=0;i<pares.length;i++){
+                imgcarta1 = new Image();
+                imgcarta1.src = pares[i][0];
+                carta1 = new Carta(cx,cy,larguracarta,alturacarta,imgcarta1,i);
+                deck.push(carta1);
+                imgcarta2 = new Image();
+                imgcarta2.src = pares[i][1];
+                carta2 = new Carta(cx,cy+alturacarta+margin,larguracarta,alturacarta,imgcarta2,i);
+                deck.push(carta2);
+                cx = cx+larguracarta+margin;
+                carta1.draw();
+                carta2.draw();
+            }
+        }
+
+        function mostrarcarta(sx,sy,swidth,sheight,img,info){
+            this.sx=sx;
+            this.sy = sy;
+            this.swidth = swidth;
+            this.sheight = sheight;
+            this.info = info;
+            this.img = img;
+            this.draw = desenharcarta();
+        }
+
+        function desenharcarta(){
+            ctx.fillStyle = backcolor;
+            ctx.fillRect(this.sx, this.sy, this.swidth, this.sheight)
+        }
+
+        function escolhercarta(ev){
+            var out;
+            var mx;
+            var my;
+            ctx.font="bold 2em sans-serif";
+            if ( ev.layerX || ev.offsetX == 0){
+                mx = ev.layerX;
+                my = ev.layerY;
+            }else if (ev.offsetX || ev.offsetY == 0){
+                mx = ev.offsetX;
+                my = ev.offsetY;
+            }
+            var i;
+
+            for (i=0;i<deck.length;i++){
+                var carta = deck[i];
+                if (carta.sx >=0 )
+                if ((mx>carta.sx) && (mx<carta.sx+carta.swidth) && (my>carta.sy) && (my>carta.sy+carta.sheight)){
+                   if((primeiroclique) || (i!=primeiracarta)){
+                    break;
+                   } 
+                }
+                if (i<deck.length){
+                    if (primeiroclique){
+                        primeiracarta=i;
+                        primeiroclique=false;
+                        ctx.drawImage(carta.img,carta.sx,carta.sy.carta.swidth,carta.sheight);
+                    }else{
+                        segundacarta = i;
+                        ctx.drawImage(carta.img,carta.sx,carta.sy,carta.swidth,carta.sheight);
+                        if(carta.info==deck[primeiracarta].info){
+                            matched = true;
+                            contagem++
+                            ctx.fillStyle = "#FFF";
+                            ctx.fillRect(0.1*larguracanvas,0.80*alturacanvas,0.8*larguracanvas, alturacanvas)
+                            ctx.fillStyle = "#000";
+                            ctx.fillText("Voce acertou "+ String(contagem), 0.2*larguracanvas,0.92*alturacanva);
+                         if(contagem>=0.5*deck.length){
+                            var now = new Date();
+                            var nt = Number(now.getTime());
+                            var segundos = Math.floor(.5+(nt-inicio)/1000);
+                            ctx.fillStyle="#FFF"
+                            ctx.fillRect(0.2*larguracanvas, 0.80*alturacanvas, 0.8*larguracanvas, alturacanvas)
+                            ctx.fillStyle='#000';
+                            out = "Voce terminou em "+ String(segundos) + " segundos.";
+                            ctx.fillText(out, 0.1*larguracanvas, 0.92*alturacanvas)
+                            return
+                            }
+                        }else{
+                            matched = false;
+                        }
+                        primeiroclique=true;
+                        tid = setTimeout(escondercartas,1000)
+                        
+                        }
+                    }
+                }
+            }
+        
+    
+
+    </script>
+
+</body>
+</html>
